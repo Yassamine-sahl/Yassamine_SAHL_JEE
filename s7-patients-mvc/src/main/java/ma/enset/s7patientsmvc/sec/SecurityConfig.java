@@ -24,13 +24,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //Injecter le meme DATA Source de l'application
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     //Preciser comment spring securite va chercher les utilisateurs et les roles
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-    /*Les utilisateurs qui ont le droit d'acceder a l'application*/
-        PasswordEncoder passwordEncoder= passwordEncoder();
+        /*Les utilisateurs qui ont le droit d'acceder a l'application*/
+
 
         /*
         Deux methodes pour encoder le
@@ -51,12 +55,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             Requete1 : Chercher l'utilisateur
             Requete2 : Charger les roles de cet utilisateur
 
-         */
         auth.jdbcAuthentication().dataSource(dataSource)
                 .usersByUsernameQuery("select username as principal, password as credentials, active from users where username = ?")
                 .authoritiesByUsernameQuery("select username as principal, role as role from users_roles where username= ?")
                 .rolePrefix("ROLE_")
                 .passwordEncoder(passwordEncoder);
+        */
+
+        /* UseDetails Service Authentification */
+        auth.userDetailsService(userDetailsService);
 
     }
 
@@ -73,10 +80,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/webjars/**").permitAll();
 
         //Toutes les URL qui commence par /ADMIN/** n'essecite d'etre un ADMIN
-        http.authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN");
+        http.authorizeRequests().antMatchers("/admin/**").hasAuthority("ADMIN");
 
         //Les ressources accessibles en tant que USER
-        http.authorizeRequests().antMatchers("/user/**").hasRole("USER");
+        http.authorizeRequests().antMatchers("/user/**").hasAuthority("USER");
 
         //Toutes les requetes http necessite une identification
         http.authorizeRequests().anyRequest().authenticated();
@@ -91,14 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-
-    @Bean
-    //Permet de creer un password encoder
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
 }
-
 
 
 

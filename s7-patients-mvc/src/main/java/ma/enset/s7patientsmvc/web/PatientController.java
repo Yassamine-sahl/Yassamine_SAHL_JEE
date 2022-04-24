@@ -22,7 +22,6 @@ import java.util.List;
 //l'injection en utilisant l'annotation AllArgsConstructor pour ajouter le constructeur avec parametre
 @AllArgsConstructor
 public class PatientController {
-
     //l'injection via l'annotation
     //@Autowired
     private PatientRepository patientRepository;
@@ -31,7 +30,7 @@ public class PatientController {
         this.patientRepository = patientRepository;
     }*/
 
-    @GetMapping(path = "/user/index")
+    @GetMapping(path = "/index")
     public String patients(Model model,
                            @RequestParam(name = "page", defaultValue = "0") int page,
                            @RequestParam(name = "size", defaultValue = "5") int size,
@@ -59,7 +58,7 @@ public class PatientController {
     @GetMapping("/admin/delete")
     public String delete(Long id, String keyword, int page) {
         patientRepository.deleteById(id);
-        return "redirect:/user/index?page=" + page + "&keyword=" + keyword;
+        return "redirect:/index?page=" + page + "&keyword=" + keyword;
     }
 
     @GetMapping("/")
@@ -76,7 +75,7 @@ public class PatientController {
         return patientRepository.findAll();
     }
 
-    @GetMapping("/admin/formPatients")
+    @GetMapping("/formPatients")
     public String formPatients(Model model){
         model.addAttribute("patient", new Patient());
         return "formPatients";
@@ -89,7 +88,7 @@ public class PatientController {
                        @RequestParam(defaultValue = "") String keyword){
         if (bindingResult.hasErrors()) return "formPatients";
         patientRepository.save(patient);
-        return "redirect:/user/index?page"+page+"&keyword="+keyword;
+        return "redirect:/index?page"+page+"&keyword="+keyword;
     }
 
     @GetMapping("/admin/editPatient")
@@ -103,9 +102,6 @@ public class PatientController {
     }
 
 }
-
-
-
 
 
 
