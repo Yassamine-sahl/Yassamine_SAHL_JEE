@@ -38,12 +38,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              Methode 2 : utilier la methode PasswordEncoder
          */
 
-        /* Memory Authentification*/
+        /* Memory Authentification
         String encodedPWD = passwordEncoder.encode("1234");
         System.out.println(encodedPWD);
         auth.inMemoryAuthentication().withUser("user1").password(passwordEncoder.encode("1234")).roles("USER");
         auth.inMemoryAuthentication().withUser("user2").password(encodedPWD).roles("USER");
         auth.inMemoryAuthentication().withUser("admin").password(encodedPWD).roles("USER","ADMIN");
+        */
+
+        /*
+        JBDC Authentifiaction
+            Requete1 : Chercher l'utilisateur
+            Requete2 : Charger les roles de cet utilisateur
+
+         */
+        auth.jdbcAuthentication().dataSource(dataSource)
+                .usersByUsernameQuery("select username as principal, password as credentials, active from users where username = ?")
+                .authoritiesByUsernameQuery("select username as principal, role as role from users_roles where username= ?")
+                .rolePrefix("ROLE_")
+                .passwordEncoder(passwordEncoder);
 
     }
 
@@ -77,6 +90,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //http.authorizeRequests().antMatchers("/index/**").hasRole("USER");
 
     }
+
 
     @Bean
     //Permet de creer un password encoder
