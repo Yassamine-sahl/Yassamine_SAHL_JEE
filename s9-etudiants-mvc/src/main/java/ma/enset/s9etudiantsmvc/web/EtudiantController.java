@@ -51,16 +51,16 @@ public class EtudiantController {
     }
 
     //Supprimer un etudiant
-    @GetMapping("/delete")
+    @GetMapping("/admin/delete")
     public String delete(Long id, String keyword, int page) {
         etudiantRepository.deleteById(id);
-        return "redirect:/index?page=" + page + "&keyword=" + keyword;
+        return "redirect:/index?page="+page+"&keyword="+keyword;
     }
 
     //Page home
     @GetMapping("/")
     public String home() {
-        return "redirect:/index";
+        return "home";
     }
 
     //Pour serialiser la liste dans le corps de la reponse
@@ -71,13 +71,14 @@ public class EtudiantController {
         return etudiantRepository.findAll();
     }
 
-    @GetMapping("/formEtudiants")
+
+    @GetMapping("/admin/formEtudiants")
     public String formEtudiants(Model model){
         model.addAttribute("etudiant",new Etudiant());
         return "formEtudiants";
     }
 
-    @PostMapping(path = "/save")
+    @PostMapping(path = "/admin/save")
     public String save(Model model, @Valid Etudiant etudiant, BindingResult bindingResult,
                        @RequestParam(defaultValue = "0") int page,
                        @RequestParam(defaultValue = "") String keyword){
@@ -86,7 +87,7 @@ public class EtudiantController {
         return "redirect:/index?page="+page+"&keyword="+keyword;
     }
 
-    @GetMapping("/editEtudiant")
+    @GetMapping("/admin/editEtudiant")
     public String editEtudiant(Model model, Long id, String keyword, int page){
         Etudiant etudiant=etudiantRepository.findById(id).orElse(null);
         if (etudiant==null) throw new RuntimeException("Etudiant introuvable");

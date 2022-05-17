@@ -2,6 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="template1">
 <head>
     <meta charset="UTF-8">
@@ -40,15 +41,15 @@
                         <td th:text="${etudiant.dateN}"></td>
                         <td th:text="${etudiant.genre}"></td>
                         <td th:text="${etudiant.regle}"></td>
-                        <td>
+                        <td sec:authorize="hasRole('ADMIN')">
                             <a onclick="return confirm('Etes vous sure ?')" class="btn btn-danger"
-                               th:href="@{delete(id=${etudiant.id}, keyword=${keyword}, page=${currentPage})}">
+                               th:href="@{/admin/delete(id=${etudiant.id}, keyword=${keyword}, page=${currentPage})}">
                                 Delete
                             </a>
                         </td>
-                        <td>
+                        <td sec:authorize="hasRole('ADMIN')">
                             <a  class="btn btn-success"
-                                th:href="@{editEtudiant(id=${etudiant.id}, keyword=${keyword}, page=${currentPage})}">
+                                th:href="@{/admin/editEtudiant(id=${etudiant.id}, keyword=${keyword}, page=${currentPage})}">
                                 Edit
                             </a>
                         </td>

@@ -11,9 +11,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Data @AllArgsConstructor @NoArgsConstructor
 public class Etudiant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
