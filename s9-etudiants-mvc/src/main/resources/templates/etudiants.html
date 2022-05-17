@@ -41,13 +41,13 @@
                         <td th:text="${etudiant.dateN}"></td>
                         <td th:text="${etudiant.genre}"></td>
                         <td th:text="${etudiant.regle}"></td>
-                        <td sec:authorize="hasRole('ADMIN')">
+                        <td sec:authorize="hasAuthority('ADMIN')">
                             <a onclick="return confirm('Etes vous sure ?')" class="btn btn-danger"
                                th:href="@{/admin/delete(id=${etudiant.id}, keyword=${keyword}, page=${currentPage})}">
                                 Delete
                             </a>
                         </td>
-                        <td sec:authorize="hasRole('ADMIN')">
+                        <td sec:authorize="hasAuthority('ADMIN')">
                             <a  class="btn btn-success"
                                 th:href="@{/admin/editEtudiant(id=${etudiant.id}, keyword=${keyword}, page=${currentPage})}">
                                 Edit
@@ -70,12 +70,3 @@
 </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-

@@ -7,6 +7,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -19,14 +22,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //Injecter le meme DATA Source de l'application
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     //Preciser comment spring securite va chercher les utilisateurs et les roles
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-    /*Les utilisateurs qui ont le droit d'acceder a l'application*/
+    /*
+    Les utilisateurs qui ont le droit d'acceder a l'application
         PasswordEncoder passwordEncoder= passwordEncoder();
-
+    */
         /*
         Deux methodes pour encoder le MDP
              Methode 1 : auth.inMemoryAuthentication().withUser("user1").password("{noop}1234").roles("USER");
@@ -44,14 +53,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         /*
         JBDC Authentifiaction
             Requete1 : Chercher l'utilisateur
-            Requete2 : Charger les roles de cet utilisateur */
+            Requete2 : Charger les roles de cet utilisateur
 
         auth.jdbcAuthentication().dataSource(dataSource)
                 .usersByUsernameQuery("select username as principal, password as credentials, active from users where username = ?")
                 .authoritiesByUsernameQuery("select username as principal, role as role from users_roles where username= ?")
                 .rolePrefix("ROLE_")
                 .passwordEncoder(passwordEncoder);
+        */
 
+        /*UseDetails Service Authentification
+            auth.userDetailsService(new UserDetailsService() {
+                @Override
+                public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                    return null;
+                }});
+         */
+
+        /* UseDetails Service Authentification */
+        auth.userDetailsService(userDetailsService);
     }
 
     //Pour Speficier les droits d'acces
@@ -68,10 +88,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/webjars/**").permitAll();
 
         //Toutes les URL qui commence par /ADMIN/** n'essecite d'etre un ADMIN
-        http.authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN");
+        http.authorizeRequests().antMatchers("/admin/**").hasAuthority("ADMIN");
 
         //Les ressources accessibles en tant que USER
-        http.authorizeRequests().antMatchers("/user/**").hasRole("USER");
+        http.authorizeRequests().antMatchers("/user/**").hasAuthority("USER");
 
         //Toutes les requetes http necessite une identification
         http.authorizeRequests().anyRequest().authenticated();
@@ -83,37 +103,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //http.authorizeRequests().antMatchers("/delete/**","/edit/**","/save/**","/formPatients/**").hasRole("ADMIN");
         //Les ressources accessibles en tant que USER
         //http.authorizeRequests().antMatchers("/index/**").hasRole("USER");
+
+
+        //Toutes les URL qui commence par /ADMIN/** n'essecite d'etre un ADMIN
+        //http.authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN");
+        //Les ressources accessibles en tant que USER
+        //http.authorizeRequests().antMatchers("/user/**").hasRole("USER");
     }
 
-    //Permet de creer un password encoder
-    @Bean
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

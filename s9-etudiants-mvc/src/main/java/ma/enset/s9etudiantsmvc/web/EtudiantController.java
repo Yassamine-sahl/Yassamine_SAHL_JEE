@@ -99,24 +99,3 @@ public class EtudiantController {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

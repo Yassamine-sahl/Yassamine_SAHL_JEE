@@ -28,7 +28,7 @@
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Etudiants</a>
         <ul class="dropdown-menu">
-          <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" th:href="@{/admin/formEtudiants}">Nouveau </a></li>
+          <li sec:authorize="hasAuthority('ADMIN')"><a class="dropdown-item" th:href="@{/admin/formEtudiants}">Nouveau </a></li>
           <li><a class="dropdown-item" th:href="@{index}">Chercher </a></li>
         </ul>
       </li>
@@ -54,11 +54,3 @@
 </section>
 </body>
 </html>
-
-
-
-
-
-
-
-
