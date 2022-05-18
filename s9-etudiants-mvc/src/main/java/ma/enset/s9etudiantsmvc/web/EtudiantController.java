@@ -58,10 +58,17 @@ public class EtudiantController {
     }
 
     //Page home
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home() {
         return "home";
     }
+
+    //Page home
+    @GetMapping("/")
+    public String home2() {
+        return "home";
+    }
+
 
     //Pour serialiser la liste dans le corps de la reponse
     //Affiche la liste des patients en format JSON
@@ -98,4 +105,25 @@ public class EtudiantController {
         return "editEtudiant";
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
