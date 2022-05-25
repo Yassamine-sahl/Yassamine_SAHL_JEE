@@ -3,9 +3,13 @@ package org.sid.ebankingbackend;
 import org.sid.ebankingbackend.entities.*;
 import org.sid.ebankingbackend.enums.AccountStatus;
 import org.sid.ebankingbackend.enums.OprerationType;
+import org.sid.ebankingbackend.exceptions.BalanceNotSufficentException;
+import org.sid.ebankingbackend.exceptions.BankAccountNotFoundException;
+import org.sid.ebankingbackend.exceptions.CustomerNotFoundException;
 import org.sid.ebankingbackend.repositories.AccountOperationRepository;
 import org.sid.ebankingbackend.repositories.BankAccountRepository;
 import org.sid.ebankingbackend.repositories.CustomerRepository;
+import org.sid.ebankingbackend.service.BankAccountService;
 import org.sid.ebankingbackend.service.BankService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -24,9 +29,33 @@ public class EbankingBackendApplication {
     }
 
     @Bean
-    CommandLineRunner start(BankService bankService){
+    CommandLineRunner start(BankAccountService bankAccountService){
         return args -> {
-            bankService.consulter();
+            Stream.of("Rayane", "Imane","Mohammed").forEach(name->{
+                Customer customer = new Customer();
+                customer.setName(name);
+                customer.setEmail(name+"@gmail.com");
+                bankAccountService.saveCustomer(customer);
+            });
+
+            bankAccountService.listCustomer().forEach(customer -> {
+                try {
+                    bankAccountService.saveCurrentBankAccount(Math.random()*90000,9000, customer.getId());
+                    bankAccountService.saveSavingBankAccount(Math.random()*120000,5.5, customer.getId());
+                    List<BankAccount> bankAccounts = bankAccountService.bankAccountsList();
+                    //Creer une operation de DEBIT et de CREDIT
+                    for (BankAccount bankAccount: bankAccounts) {
+                        bankAccountService.credit(bankAccount.getId(),10000+Math.random()*120000, "Credit");
+                        bankAccountService.debit(bankAccount.getId(),10000+Math.random()*9000, "Debit");
+                    }
+                } catch (CustomerNotFoundException e ) {
+                    e.printStackTrace();
+                } catch (BankAccountNotFoundException e) {
+                    e.printStackTrace();
+                } catch (BalanceNotSufficentException e) {
+                    e.printStackTrace();
+                }
+            });
         };
     }
 

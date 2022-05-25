@@ -19,6 +19,7 @@ public class AccountOperation {
     //Enregistrer sous format String
     @Enumerated(EnumType.STRING)
     private OprerationType type;
+    private String description;
     @ManyToOne
     private BankAccount bankAccount;
 }
